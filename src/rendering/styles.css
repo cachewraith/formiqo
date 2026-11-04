@@ -1,0 +1,267 @@
+/*
+ * Formiqo – enhanced Reading View
+ *
+ * Every rule is scoped to rendered Markdown (`.markdown-preview-view`) and gated
+ * behind body classes that Formiqo adds only while the matching setting is on:
+ *
+ *   .formiqo-reading            enhanced Reading View enabled
+ *   .formiqo-tables             table styling
+ *   .formiqo-responsive-tables  horizontal scrolling for wide tables
+ *   .formiqo-code               code block + inline code styling
+ *   .formiqo-typography         headings, paragraphs, links, rules
+ *   .formiqo-lists              list spacing
+ *   .formiqo-blockquotes        blockquote styling
+ *
+ * Colours come from Obsidian's theme variables, so light, dark and custom
+ * themes (and the accent colour) are respected. Override any --formiqo-*
+ * variable from a CSS snippet to fine-tune the look.
+ */
+
+body.formiqo-reading {
+	--formiqo-radius: var(--radius-m, 8px);
+	--formiqo-radius-small: var(--radius-s, 4px);
+	--formiqo-border: var(--background-modifier-border);
+	--formiqo-block-gap: 1.1em;
+	--formiqo-accent-tint: hsla(var(--accent-h, 254), var(--accent-s, 80%), var(--accent-l, 68%), 0.06);
+	--formiqo-accent-tint-strong: hsla(var(--accent-h, 254), var(--accent-s, 80%), var(--accent-l, 68%), 0.12);
+	--formiqo-table-header-bg: var(--background-secondary);
+	--formiqo-table-stripe-bg: var(--formiqo-accent-tint);
+	--formiqo-table-hover-bg: var(--background-modifier-hover);
+	--formiqo-cell-padding-y: var(--size-4-2, 8px);
+	--formiqo-cell-padding-x: var(--size-4-3, 12px);
+	--formiqo-code-padding: var(--size-4-3, 12px) var(--size-4-4, 16px);
+	--formiqo-line-height: 1.7;
+}
+
+/* ---------------------------------------------------------------- Images */
+
+.formiqo-reading .markdown-preview-view img {
+	max-width: 100%;
+}
+
+/* Keep the aspect ratio unless the note sets an explicit height (`![[img.png|300x200]]`). */
+.formiqo-reading .markdown-preview-view img:not([height]) {
+	height: auto;
+}
+
+/* Wide display equations scroll instead of overflowing; MathJax rendering is untouched. */
+.formiqo-reading .markdown-preview-view mjx-container[display="true"] {
+	overflow-x: auto;
+	overflow-y: hidden;
+	max-width: 100%;
+}
+
+/* ---------------------------------------------------------------- Tables */
+
+.formiqo-reading.formiqo-tables .markdown-preview-view table {
+	border-collapse: separate;
+	border-spacing: 0;
+	border: 1px solid var(--formiqo-border);
+	border-radius: var(--formiqo-radius);
+	overflow: hidden;
+	margin-block: var(--formiqo-block-gap);
+	font-size: 0.95em;
+	line-height: 1.5;
+}
+
+.formiqo-reading.formiqo-tables .markdown-preview-view th,
+.formiqo-reading.formiqo-tables .markdown-preview-view td {
+	padding: var(--formiqo-cell-padding-y) var(--formiqo-cell-padding-x);
+	border: none;
+	border-bottom: 1px solid var(--formiqo-border);
+	border-inline-end: 1px solid var(--formiqo-border);
+	vertical-align: top;
+}
+
+.formiqo-reading.formiqo-tables .markdown-preview-view th:last-child,
+.formiqo-reading.formiqo-tables .markdown-preview-view td:last-child {
+	border-inline-end: none;
+}
+
+.formiqo-reading.formiqo-tables .markdown-preview-view tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.formiqo-reading.formiqo-tables .markdown-preview-view thead th {
+	background-color: var(--formiqo-table-header-bg);
+	font-weight: var(--font-semibold, 600);
+	color: var(--text-normal);
+	border-bottom: 2px solid var(--formiqo-border);
+}
+
+.formiqo-reading.formiqo-tables .markdown-preview-view tbody tr:nth-child(even) {
+	background-color: var(--formiqo-table-stripe-bg);
+}
+
+.formiqo-reading.formiqo-tables .markdown-preview-view tbody tr:hover {
+	background-color: var(--formiqo-table-hover-bg);
+}
+
+.formiqo-reading.formiqo-tables .markdown-preview-view td code,
+.formiqo-reading.formiqo-tables .markdown-preview-view th code {
+	overflow-wrap: anywhere;
+}
+
+/* Responsive tables: Formiqo wraps each table in .formiqo-table-scroll. */
+.formiqo-reading.formiqo-responsive-tables .markdown-preview-view .formiqo-table-scroll {
+	max-width: 100%;
+	overflow-x: auto;
+	margin-block: var(--formiqo-block-gap);
+	-webkit-overflow-scrolling: touch;
+}
+
+.formiqo-reading.formiqo-responsive-tables .markdown-preview-view .formiqo-table-scroll > table {
+	margin-block: 0;
+}
+
+/* With scrolling available, keep code tokens in cells on one line for readability. */
+.formiqo-reading.formiqo-responsive-tables .markdown-preview-view .formiqo-table-scroll td code {
+	white-space: nowrap;
+	overflow-wrap: normal;
+}
+
+/* ------------------------------------------------------------ Code blocks */
+
+.formiqo-reading.formiqo-code .markdown-preview-view pre {
+	position: relative;
+	border: 1px solid var(--formiqo-border);
+	border-radius: var(--formiqo-radius);
+	padding: var(--formiqo-code-padding);
+	margin-block: var(--formiqo-block-gap);
+	line-height: 1.55;
+	overflow-x: auto;
+}
+
+.formiqo-reading.formiqo-code .markdown-preview-view pre > code {
+	white-space: pre;
+	overflow-wrap: normal;
+	word-break: normal;
+}
+
+.formiqo-reading.formiqo-code .markdown-preview-view pre[data-formiqo-lang] {
+	padding-top: calc(var(--size-4-3, 12px) + 1.5em);
+}
+
+.formiqo-reading.formiqo-code .markdown-preview-view pre[data-formiqo-lang]::before {
+	content: attr(data-formiqo-lang);
+	position: absolute;
+	top: var(--size-4-2, 8px);
+	inset-inline-start: var(--size-4-4, 16px);
+	font-family: var(--font-interface);
+	font-size: var(--font-smallest, 0.75em);
+	font-weight: var(--font-medium, 500);
+	letter-spacing: 0.04em;
+	text-transform: lowercase;
+	color: var(--text-faint);
+	pointer-events: none;
+	user-select: none;
+}
+
+/* Inline code */
+.formiqo-reading.formiqo-code .markdown-preview-view :not(pre) > code {
+	padding: 0.12em 0.38em;
+	border: 1px solid var(--formiqo-border);
+	border-radius: var(--formiqo-radius-small);
+	background-color: var(--code-background);
+	font-size: 0.875em;
+	box-decoration-break: clone;
+	-webkit-box-decoration-break: clone;
+}
+
+/* ------------------------------------------------------------ Typography */
+
+.formiqo-reading.formiqo-typography .markdown-preview-view p,
+.formiqo-reading.formiqo-typography .markdown-preview-view li {
+	line-height: var(--formiqo-line-height);
+}
+
+.formiqo-reading.formiqo-typography .markdown-preview-view :is(h1, h2, h3, h4, h5, h6) {
+	line-height: 1.3;
+	letter-spacing: -0.005em;
+	margin-bottom: 0.5em;
+}
+
+.formiqo-reading.formiqo-typography .markdown-preview-view h1 {
+	margin-top: 1.8em;
+}
+
+.formiqo-reading.formiqo-typography .markdown-preview-view h2 {
+	margin-top: 1.6em;
+	padding-bottom: 0.3em;
+	border-bottom: 1px solid var(--formiqo-border);
+}
+
+.formiqo-reading.formiqo-typography .markdown-preview-view :is(h3, h4) {
+	margin-top: 1.4em;
+}
+
+.formiqo-reading.formiqo-typography .markdown-preview-view :is(h5, h6) {
+	margin-top: 1.2em;
+}
+
+.formiqo-reading.formiqo-typography .markdown-preview-view hr {
+	border: none;
+	border-top: 1px solid var(--formiqo-border);
+	margin-block: 2em;
+}
+
+.formiqo-reading.formiqo-typography .markdown-preview-view a:is(.internal-link, .external-link) {
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.2em;
+	transition: color 120ms ease, text-decoration-color 120ms ease;
+}
+
+.formiqo-reading.formiqo-typography .markdown-preview-view a:is(.internal-link, .external-link):hover {
+	text-decoration-thickness: 2px;
+}
+
+/* ----------------------------------------------------------------- Lists */
+
+.formiqo-reading.formiqo-lists .markdown-preview-view li {
+	margin-block: 0.2em;
+}
+
+.formiqo-reading.formiqo-lists .markdown-preview-view li > :is(ul, ol) {
+	margin-block: 0.2em;
+}
+
+.formiqo-reading.formiqo-lists .markdown-preview-view li::marker {
+	color: var(--text-muted);
+}
+
+.formiqo-reading.formiqo-lists .markdown-preview-view .task-list-item-checkbox {
+	vertical-align: middle;
+}
+
+/* ------------------------------------------------- Blockquotes & callouts */
+
+.formiqo-reading.formiqo-blockquotes .markdown-preview-view blockquote {
+	margin-inline: 0;
+	margin-block: var(--formiqo-block-gap);
+	padding: var(--size-4-2, 8px) var(--size-4-4, 16px);
+	border-inline-start: 3px solid var(--interactive-accent);
+	border-radius: 0 var(--formiqo-radius-small) var(--formiqo-radius-small) 0;
+	background-color: var(--formiqo-accent-tint);
+}
+
+.formiqo-reading.formiqo-blockquotes .markdown-preview-view blockquote blockquote {
+	background-color: var(--formiqo-accent-tint-strong);
+}
+
+/* Native callouts keep their own colours; only spacing is harmonised. */
+.formiqo-reading.formiqo-blockquotes .markdown-preview-view .callout {
+	margin-block: var(--formiqo-block-gap);
+}
+
+/* ---------------------------------------------------------- Accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+	.formiqo-reading.formiqo-typography .markdown-preview-view a:is(.internal-link, .external-link) {
+		transition: none;
+	}
+}
+
+.is-mobile.formiqo-reading {
+	--formiqo-cell-padding-x: var(--size-4-2, 8px);
+	--formiqo-code-padding: var(--size-4-2, 8px) var(--size-4-3, 12px);
+}

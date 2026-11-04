@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+main.js
+*.js.map
+
+# Test & tooling output
+coverage/
+.vitest/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+*.log
