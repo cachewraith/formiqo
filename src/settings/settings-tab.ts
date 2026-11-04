@@ -1,4 +1,13 @@
-import { Modal, PluginSettingTab, Setting, type App, type Plugin } from "obsidian";
+import {
+	Modal,
+	PluginSettingTab,
+	requireApiVersion,
+	Setting,
+	type App,
+	type Plugin,
+	type SettingDefinition,
+	type SettingDefinitionItem,
+} from "obsidian";
 import type { PreservationOptions } from "../types";
 import type { FormattingSettings, FormiqoSettings, ReadingSettings } from "./settings";
 import type { FormiqoHost } from "./settings-host";
@@ -45,6 +54,76 @@ const READING_TOGGLES: readonly ToggleSpec<keyof ReadingSettings>[] = [
 	{ key: "blockquotes", name: "Blockquote styling", desc: "Accent border and subtle background for quotes. Callouts keep their native look." },
 ];
 
+/** Top-level settings keys, and `group.field` keys for the nested groups. */
+type SettingKey =
+	| "enabled"
+	| "pasteFormatting"
+	| "readingView"
+	| `formatting.${keyof FormattingSettings}`
+	| `preservation.${keyof PreservationOptions}`
+	| `reading.${keyof ReadingSettings}`;
+
+interface Section {
+	/** Null for the first section, which (per Obsidian's guidelines) has no heading. */
+	readonly heading: string | null;
+	readonly toggles: readonly ToggleSpec<SettingKey>[];
+}
+
+const prefixed = <G extends string, K extends string>(group: G, specs: readonly ToggleSpec<K>[]): ToggleSpec<`${G}.${K}`>[] =>
+	specs.map((spec) => ({ ...spec, key: `${group}.${spec.key}` as const }));
+
+/** Single source of truth for both the declarative (1.13+) and imperative (< 1.13) settings UI. */
+const SECTIONS: readonly Section[] = [
+	{
+		heading: null,
+		toggles: [
+			{ key: "enabled", name: "Enable Formiqo", desc: "Master switch for paste formatting, Reading View enhancements and the formatting commands." },
+			{ key: "pasteFormatting", name: "Automatic paste formatting", desc: "Repair malformed Markdown when pasting. Valid Markdown, plain text and source code are pasted unchanged." },
+			{ key: "readingView", name: "Enhanced Reading View", desc: "Apply Formiqo's styling to rendered notes." },
+		],
+	},
+	{ heading: "Formatting", toggles: prefixed("formatting", FORMATTING_TOGGLES) },
+	{ heading: "Preservation", toggles: prefixed("preservation", PRESERVATION_TOGGLES) },
+	{ heading: "Reading View", toggles: prefixed("reading", READING_TOGGLES) },
+];
+
+const SETTING_KEYS: ReadonlySet<string> = new Set(SECTIONS.flatMap((section) => section.toggles.map((toggle) => toggle.key)));
+
+const RESET = {
+	heading: "Reset",
+	name: "Reset to defaults",
+	desc: "Restore every Formiqo setting to its default value.",
+} as const;
+
+/** First Obsidian version with the declarative settings API (getSettingDefinitions). */
+const DECLARATIVE_SETTINGS_VERSION = "1.13.0";
+
+function isSettingKey(key: string): key is SettingKey {
+	return SETTING_KEYS.has(key);
+}
+
+/** The object holding a key's value and the property name within it. */
+function locate(settings: FormiqoSettings, key: SettingKey): [Record<string, unknown>, string] {
+	const [group, field] = key.split(".") as [string, string | undefined];
+	if (field === undefined) return [settings as unknown as Record<string, unknown>, group];
+	return [(settings as unknown as Record<string, Record<string, unknown>>)[group] ?? {}, field];
+}
+
+export function readToggle(settings: FormiqoSettings, key: SettingKey): boolean {
+	const [container, property] = locate(settings, key);
+	return container[property] === true;
+}
+
+function writeToggle(settings: FormiqoSettings, key: SettingKey, value: boolean): void {
+	const [container, property] = locate(settings, key);
+	container[property] = value;
+}
+
+/**
+ * Obsidian 1.13+ renders (and indexes for settings search) the declarative
+ * definitions and skips display(); older versions call display(). Both are
+ * generated from SECTIONS, so they cannot drift apart.
+ */
 export class FormiqoSettingTab extends PluginSettingTab {
 	constructor(
 		app: App,
@@ -54,10 +133,36 @@ export class FormiqoSettingTab extends PluginSettingTab {
 		super(app, plugin);
 	}
 
-	/**
-	 * Imperative rendering: the declarative getSettingDefinitions() API only
-	 * exists since Obsidian 1.13, and Formiqo supports versions back to 1.1.0.
-	 */
+	override getSettingDefinitions(): SettingDefinitionItem[] {
+		const toDefinition = (toggle: ToggleSpec<SettingKey>): SettingDefinition => ({
+			name: toggle.name,
+			desc: toggle.desc,
+			control: { type: "toggle", key: toggle.key },
+		});
+		const items: SettingDefinitionItem[] = [];
+		for (const section of SECTIONS) {
+			if (section.heading === null) items.push(...section.toggles.map(toDefinition));
+			else items.push({ type: "group", heading: section.heading, items: section.toggles.map(toDefinition) });
+		}
+		items.push({
+			type: "group",
+			heading: RESET.heading,
+			items: [{ name: RESET.name, desc: RESET.desc, action: () => this.confirmReset() }],
+		});
+		return items;
+	}
+
+	override getControlValue(key: string): unknown {
+		return isSettingKey(key) ? readToggle(this.host.settings, key) : undefined;
+	}
+
+	/** Writes go through the plugin so they are validated, saved and applied. */
+	override async setControlValue(key: string, value: unknown): Promise<void> {
+		if (!isSettingKey(key) || typeof value !== "boolean") return;
+		await this.host.updateSettings((settings) => writeToggle(settings, key, value));
+	}
+
+	/** Imperative rendering for Obsidian versions before 1.13. */
 	override display(): void {
 		this.render();
 	}
@@ -65,53 +170,44 @@ export class FormiqoSettingTab extends PluginSettingTab {
 	private render(): void {
 		const { containerEl } = this;
 		containerEl.empty();
-		const settings = this.host.settings;
 
-		this.toggle(containerEl, "Enable Formiqo", "Master switch for paste formatting, Reading View enhancements and the formatting commands.", settings.enabled, (s, v) => (s.enabled = v));
-		this.toggle(containerEl, "Automatic paste formatting", "Repair malformed Markdown when pasting. Valid Markdown, plain text and source code are pasted unchanged.", settings.pasteFormatting, (s, v) => (s.pasteFormatting = v));
-		this.toggle(containerEl, "Enhanced Reading View", "Apply Formiqo's styling to rendered notes.", settings.readingView, (s, v) => (s.readingView = v));
-
-		new Setting(containerEl).setName("Formatting").setHeading();
-		for (const spec of FORMATTING_TOGGLES) {
-			this.toggle(containerEl, spec.name, spec.desc, settings.formatting[spec.key], (s, v) => (s.formatting[spec.key] = v));
+		for (const section of SECTIONS) {
+			if (section.heading !== null) new Setting(containerEl).setName(section.heading).setHeading();
+			for (const toggle of section.toggles) {
+				new Setting(containerEl)
+					.setName(toggle.name)
+					.setDesc(toggle.desc)
+					.addToggle((component) =>
+						component.setValue(readToggle(this.host.settings, toggle.key)).onChange(async (value) => {
+							await this.host.updateSettings((settings) => writeToggle(settings, toggle.key, value));
+						}),
+					);
+			}
 		}
 
-		new Setting(containerEl).setName("Preservation").setHeading();
-		for (const spec of PRESERVATION_TOGGLES) {
-			this.toggle(containerEl, spec.name, spec.desc, settings.preservation[spec.key], (s, v) => (s.preservation[spec.key] = v));
-		}
-
-		new Setting(containerEl).setName("Reading View").setHeading();
-		for (const spec of READING_TOGGLES) {
-			this.toggle(containerEl, spec.name, spec.desc, settings.reading[spec.key], (s, v) => (s.reading[spec.key] = v));
-		}
-
-		new Setting(containerEl).setName("Reset").setHeading();
+		new Setting(containerEl).setName(RESET.heading).setHeading();
 		new Setting(containerEl)
-			.setName("Reset to defaults")
-			.setDesc("Restore every Formiqo setting to its default value.")
+			.setName(RESET.name)
+			.setDesc(RESET.desc)
 			.addButton((button) =>
 				button
 					.setButtonText("Reset")
 					.setClass(WARNING_BUTTON_CLASS)
-					.onClick(() => {
-						new ConfirmResetModal(this.app, async () => {
-							await this.host.resetSettings();
-							this.render();
-						}).open();
-					}),
+					.onClick(() => this.confirmReset()),
 			);
 	}
 
-	private toggle(container: HTMLElement, name: string, desc: string, value: boolean, assign: (settings: FormiqoSettings, value: boolean) => void): void {
-		new Setting(container)
-			.setName(name)
-			.setDesc(desc)
-			.addToggle((toggle) =>
-				toggle.setValue(value).onChange(async (next) => {
-					await this.host.updateSettings((settings) => assign(settings, next));
-				}),
-			);
+	private confirmReset(): void {
+		new ConfirmResetModal(this.app, async () => {
+			await this.host.resetSettings();
+			this.refresh();
+		}).open();
+	}
+
+	/** display() does not refresh declarative settings on 1.13+; update() does. */
+	private refresh(): void {
+		if (requireApiVersion(DECLARATIVE_SETTINGS_VERSION)) this.update();
+		else this.render();
 	}
 }
 

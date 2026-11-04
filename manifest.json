@@ -1,7 +1,7 @@
 {
   "id": "formiqo",
   "name": "Formiqo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "minAppVersion": "1.1.0",
   "description": "Make Markdown beautiful. Repairs malformed Markdown on paste, normalizes documents, and refines the Reading View.",
   "author": "cachewraith",

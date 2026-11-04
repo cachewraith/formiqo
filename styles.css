@@ -45,7 +45,7 @@ body.formiqo-reading {
 }
 
 /* Wide display equations scroll instead of overflowing; MathJax rendering is untouched. */
-.formiqo-reading .markdown-preview-view mjx-container[display="true"] {
+.formiqo-reading .markdown-preview-view .math-block {
 	overflow-x: auto;
 	overflow-y: hidden;
 	max-width: 100%;
@@ -204,13 +204,8 @@ body.formiqo-reading {
 }
 
 .formiqo-reading.formiqo-typography .markdown-preview-view a:is(.internal-link, .external-link) {
-	text-decoration-thickness: 1px;
 	text-underline-offset: 0.2em;
 	transition: color 120ms ease, text-decoration-color 120ms ease;
-}
-
-.formiqo-reading.formiqo-typography .markdown-preview-view a:is(.internal-link, .external-link):hover {
-	text-decoration-thickness: 2px;
 }
 
 /* ----------------------------------------------------------------- Lists */

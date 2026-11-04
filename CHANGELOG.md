@@ -2,6 +2,18 @@
 
 All notable changes to Formiqo are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] – 2026-11-04
+
+Addresses the community directory's review of 1.0.0.
+
+### Changed
+- On Obsidian 1.13 and newer, Formiqo's settings use the new declarative settings API, so they appear in Obsidian's settings search. Older versions keep the previous settings screen, which shows the same options.
+- Wide display equations: the scroll container now targets Obsidian's `.math-block` wrapper instead of MathJax's internal element.
+- Links in the Reading View no longer change underline thickness on hover (that property is only partly supported in older Obsidian versions). The underline offset stays.
+
+### Security
+- Development tooling: `minimatch` is pinned to 11.0.1 or newer (GHSA-g3hv-75wg-m249). This affects ESLint and typescript-eslint only; nothing ships in the plugin.
+
 ## [1.0.0] – 2026-11-04
 
 First release.

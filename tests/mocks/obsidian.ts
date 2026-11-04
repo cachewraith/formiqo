@@ -152,8 +152,25 @@ interface ButtonStub {
 
 const containerStub = (): { empty(): void; createEl(): unknown } => ({ empty: () => undefined, createEl: () => ({}) });
 
+/** The Obsidian version the mocked API reports; tests switch it to exercise both settings paths. */
+export const apiVersion = { current: "1.15.0" };
+
+export function requireApiVersion(version: string): boolean {
+	const parse = (value: string): number[] => value.split(".").map(Number);
+	const [a, b] = [parse(apiVersion.current), parse(version)];
+	for (let i = 0; i < 3; i++) {
+		if ((a[i] ?? 0) !== (b[i] ?? 0)) return (a[i] ?? 0) > (b[i] ?? 0);
+	}
+	return true;
+}
+
 export class PluginSettingTab {
+	updates = 0;
 	readonly containerEl = containerStub();
+
+	update(): void {
+		this.updates++;
+	}
 	constructor(
 		readonly app: App,
 		readonly plugin: unknown,

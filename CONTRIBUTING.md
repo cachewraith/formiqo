@@ -84,7 +84,7 @@ input ─► split edges ─► scan ─► formatters (re-scan before each) ─
 - **Obsidian's `editor-paste` event** rather than a raw CodeMirror 6 DOM handler. It is the documented hook and cooperates with other plugins through `evt.defaultPrevented`. Edits go through Obsidian's `Editor` API (`replaceSelection`, `transaction`), so each one is a single undo step.
 - **Minimal edits.** The commands diff old and new text by line (Myers' algorithm) and replace only changed lines, so the cursor and scroll position stay put.
 - **Reading View styles are switched on by body classes.** Every CSS rule is scoped to `.markdown-preview-view`, behind `.formiqo-reading`.
-- **Compatibility.** `minAppVersion` is 1.1.0, the version that added `editor-paste`. The settings tab uses `display()` and `setWarning()`, which Obsidian deprecated in 1.13 but still supports. Their replacements don't exist on older versions.
+- **Compatibility.** `minAppVersion` is 1.1.0, the version that added `editor-paste`. The settings tab supports both settings APIs from one list of toggles (`SECTIONS` in `settings-tab.ts`). Obsidian 1.13+ uses the declarative `getSettingDefinitions()`, which makes Formiqo's settings searchable; older versions call the imperative `display()`. A test checks that both show the same settings. Add new settings to `SECTIONS` only. No deprecated API is called, because the directory's scanner rejects disabling `no-deprecated`.
 
 ## Code rules
 
