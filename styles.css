@@ -164,8 +164,6 @@ body.formiqo-reading {
 	border-radius: var(--formiqo-radius-small);
 	background-color: var(--code-background);
 	font-size: 0.875em;
-	box-decoration-break: clone;
-	-webkit-box-decoration-break: clone;
 }
 
 /* ------------------------------------------------------------ Typography */

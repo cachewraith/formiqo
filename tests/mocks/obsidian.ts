@@ -128,7 +128,7 @@ export class Setting {
 	addButton(build: (button: ButtonStub) => unknown): this {
 		const button: ButtonStub = {
 			setButtonText: () => button,
-			setWarning: () => button,
+			setClass: () => button,
 			onClick: (callback) => {
 				this.buttonClicks.push(callback);
 				return button;
@@ -146,7 +146,7 @@ interface ToggleStub {
 
 interface ButtonStub {
 	setButtonText(text: string): ButtonStub;
-	setWarning(): ButtonStub;
+	setClass(cls: string): ButtonStub;
 	onClick(callback: () => unknown): ButtonStub;
 }
 

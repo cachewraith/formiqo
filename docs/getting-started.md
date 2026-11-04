@@ -36,7 +36,7 @@ bun install
 bun run build
 ```
 
-The three files appear in `dist/`. Copy them into `.obsidian/plugins/formiqo/` as in option 1.
+The three files appear in the `dist/` folder. Copy them into `.obsidian/plugins/formiqo/` as in option 1.
 
 ## Try it in two minutes
 

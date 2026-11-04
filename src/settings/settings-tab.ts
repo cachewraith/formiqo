@@ -3,6 +3,13 @@ import type { PreservationOptions } from "../types";
 import type { FormattingSettings, FormiqoSettings, ReadingSettings } from "./settings";
 import type { FormiqoHost } from "./settings-host";
 
+/**
+ * Obsidian's red "destructive" button style. Applied as a class because
+ * setWarning() is deprecated and its replacement, setDestructive(), only
+ * exists since Obsidian 1.13.
+ */
+const WARNING_BUTTON_CLASS = "mod-warning";
+
 interface ToggleSpec<K extends string> {
 	readonly key: K;
 	readonly name: string;
@@ -47,9 +54,15 @@ export class FormiqoSettingTab extends PluginSettingTab {
 		super(app, plugin);
 	}
 
-	// `display()` is the documented settings API for Obsidian < 1.13 (minAppVersion is 1.1.0);
-	// the declarative getSettingDefinitions() API does not exist on those versions.
+	/**
+	 * Imperative rendering: the declarative getSettingDefinitions() API only
+	 * exists since Obsidian 1.13, and Formiqo supports versions back to 1.1.0.
+	 */
 	override display(): void {
+		this.render();
+	}
+
+	private render(): void {
 		const { containerEl } = this;
 		containerEl.empty();
 		const settings = this.host.settings;
@@ -80,15 +93,11 @@ export class FormiqoSettingTab extends PluginSettingTab {
 			.addButton((button) =>
 				button
 					.setButtonText("Reset")
-					// setDestructive() only exists since Obsidian 1.13; setWarning() works on every supported version.
-					// eslint-disable-next-line @typescript-eslint/no-deprecated
-					.setWarning()
+					.setClass(WARNING_BUTTON_CLASS)
 					.onClick(() => {
 						new ConfirmResetModal(this.app, async () => {
 							await this.host.resetSettings();
-							// Re-render with the defaults; see the note on display() above.
-							// eslint-disable-next-line @typescript-eslint/no-deprecated
-							this.display();
+							this.render();
 						}).open();
 					}),
 			);
@@ -122,9 +131,7 @@ class ConfirmResetModal extends Modal {
 			.addButton((button) =>
 				button
 					.setButtonText("Reset")
-					// See above: setDestructive() requires Obsidian 1.13.
-					// eslint-disable-next-line @typescript-eslint/no-deprecated
-					.setWarning()
+					.setClass(WARNING_BUTTON_CLASS)
 					.onClick(async () => {
 						this.close();
 						await this.onConfirm();

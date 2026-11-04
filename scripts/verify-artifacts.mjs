@@ -1,5 +1,7 @@
 /**
- * Verifies the plugin manifest and the production artifacts in dist/.
+ * Verifies the plugin manifest and the production artifacts: main.js and
+ * styles.css at the repository root (used for GitHub releases) and the
+ * ready-to-install copy in dist/.
  * Run after `bun run build` (it is the last step of `bun run validate`).
  */
 
@@ -43,8 +45,9 @@ for (const file of expected) {
 	const size = statSync(path.join(distDir, file)).size;
 	check(size > 0, `dist/${file} must not be empty`);
 }
-check(readFileSync("dist/manifest.json", "utf8") === readFileSync("manifest.json", "utf8"), "dist/manifest.json differs from manifest.json");
-check(readFileSync("dist/styles.css", "utf8") === readFileSync("src/rendering/styles.css", "utf8"), "dist/styles.css differs from the source stylesheet");
+for (const file of expected) {
+	check(readFileSync(path.join(distDir, file), "utf8") === readFileSync(file, "utf8"), `dist/${file} differs from ./${file} (run \`bun run build\`)`);
+}
 
 // ------------------------------------------------------------------- bundle
 const bundle = readFileSync("dist/main.js", "utf8");

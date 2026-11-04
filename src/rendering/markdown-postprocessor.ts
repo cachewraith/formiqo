@@ -30,8 +30,7 @@ export function wrapTables(root: HTMLElement): void {
 	for (const table of Array.from(root.querySelectorAll("table"))) {
 		const parent = table.parentElement;
 		if (!parent || parent.classList.contains(TABLE_WRAPPER_CLASS)) continue;
-		const wrapper = table.ownerDocument.createElement("div");
-		wrapper.className = TABLE_WRAPPER_CLASS;
+		const wrapper = parent.createDiv({ cls: TABLE_WRAPPER_CLASS });
 		parent.insertBefore(wrapper, table);
 		wrapper.appendChild(table);
 	}

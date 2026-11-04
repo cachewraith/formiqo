@@ -16,8 +16,8 @@ bun install
 
 | Command | What it does |
 |---|---|
-| `bun run dev` | Watch mode with inline source maps, writing to `dist/` |
-| `bun run build` | Production build to `dist/` (`main.js`, `manifest.json`, `styles.css`) |
+| `bun run dev` | Watch mode with inline source maps |
+| `bun run build` | Production build: `main.js` at the repo root, plus a ready-to-install copy of `main.js`, `manifest.json` and `styles.css` in `dist/` |
 | `bun run typecheck` | `tsc --noEmit` in strict mode, over `src/` and `tests/` |
 | `bun run lint` | ESLint with type-aware rules plus security rules |
 | `bun run test` | Run the Vitest suite once |
@@ -59,10 +59,11 @@ src/
 │   └── editor-commands.ts        Command palette commands
 ├── rendering/
 │   ├── reading-view.ts           Body classes (main and popout windows), re-render
-│   ├── markdown-postprocessor.ts Table scroll wrappers, code language labels
-│   └── styles.css                Scoped Reading View stylesheet
+│   └── markdown-postprocessor.ts Table scroll wrappers, code language labels
 ├── settings/                     Types, defaults, validation/migration, settings tab
 └── utils/                        Text, block syntax, inline spans, line diff
+styles.css                        Scoped Reading View stylesheet (kept at the root, where releases expect it)
+main.js                           Build output (git-ignored)
 tests/                            Mirrors src/; fixtures/, regressions/, mocks/
 scripts/verify-artifacts.mjs      Manifest and bundle checks
 docs/                             User documentation
@@ -111,10 +112,23 @@ ESLint and the tests enforce these:
 3. Run `bun run validate`. It must pass.
 4. In the pull request, describe the problem and the fix, with before/after Markdown where relevant.
 
+## Continuous integration
+
+- `.github/workflows/ci.yml` runs on every push and pull request. It runs `bun run validate`, then Obsidian's official [`obsidian-workflows`](https://github.com/obsidianmd/obsidian-workflows) checks, which use the same ESLint and stylelint rules as the community directory's automated review.
+- To reproduce the directory's lint locally, the important rules are: no `eslint-disable` of `@typescript-eslint/no-deprecated`, every `eslint-disable` comment needs a `-- reason`, and no `innerHTML`.
+
 ## Releasing
+
+Releases are built by GitHub Actions, never uploaded by hand. That way every release carries a build attestation, which the community directory checks.
 
 1. Update the version in `manifest.json` and `package.json`, and add `"<version>": "<minAppVersion>"` to `versions.json`.
 2. Add an entry to [`CHANGELOG.md`](CHANGELOG.md).
-3. Run `bun run validate`.
-4. Commit, then tag the commit with the bare version number (e.g. `1.0.1`, no `v` prefix), as Obsidian expects.
-5. Create a GitHub release for that tag and attach `dist/main.js`, `dist/manifest.json` and `dist/styles.css` as separate files.
+3. Run `bun run validate`, then commit and push to `main`.
+4. Tag the commit with the bare version number (no `v` prefix) and push the tag:
+
+   ```bash
+   git tag 1.0.1 && git push origin 1.0.1
+   ```
+
+5. `.github/workflows/release.yml` validates the plugin, builds it, attests `main.js` and `styles.css`, and creates a **draft** release with `main.js`, `manifest.json` and `styles.css`.
+6. Check the draft on the [Releases page](https://github.com/cachewraith/formiqo/releases), paste the changelog entry into it, and publish.

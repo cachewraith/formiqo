@@ -22,9 +22,7 @@ function setup() {
 	};
 	const app = new App() as never;
 	const tab = new FormiqoSettingTab(app, new Plugin(new App(), {}) as never, host);
-	// display() is the settings API on Obsidian < 1.13, which Formiqo supports.
-	// eslint-disable-next-line @typescript-eslint/no-deprecated
-	tab.display();
+	tab.display(); // eslint-disable-line @typescript-eslint/no-deprecated -- the imperative API is what Obsidian < 1.13 calls
 	const find = (name: string): Setting => {
 		const setting = created().find((candidate) => candidate.name === name);
 		if (!setting) throw new Error(`missing setting ${name}`);

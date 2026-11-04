@@ -19,7 +19,7 @@
     "formatter",
     "markdown-tables"
   ],
-  "main": "dist/main.js",
+  "main": "main.js",
   "type": "module",
   "private": true,
   "scripts": {

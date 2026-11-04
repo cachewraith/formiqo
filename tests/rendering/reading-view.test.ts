@@ -5,6 +5,9 @@ import { createReadingViewPostProcessor, LANGUAGE_ATTRIBUTE, TABLE_WRAPPER_CLASS
 import { readingViewClasses, ReadingViewStyler } from "../../src/rendering/reading-view";
 import type { FormiqoSettings } from "../../src/settings/settings";
 import { createDefaultSettings } from "../../src/settings/settings-defaults";
+import { installObsidianDomHelpers } from "../mocks/obsidian-dom";
+
+installObsidianDomHelpers();
 
 /** Builds a DOM fragment the way Obsidian's renderer would, without parsing HTML strings. */
 function renderedSection(): HTMLElement {

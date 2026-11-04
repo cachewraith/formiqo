@@ -4,6 +4,9 @@ import path from "node:path";
 import esbuild from "esbuild";
 
 const production = process.argv[2] === "production";
+/** main.js and styles.css live at the repository root, where Obsidian's release tooling expects them. */
+const outFile = "main.js";
+/** dist/ gets a ready-to-install copy of the three runtime files. */
 const outDir = "dist";
 
 /**
@@ -12,32 +15,26 @@ const outDir = "dist";
  */
 const vaultPluginDir = process.env.OBSIDIAN_PLUGIN_DIR;
 
-const STATIC_FILES = [
-	{ from: "manifest.json", to: "manifest.json" },
-	{ from: "src/rendering/styles.css", to: "styles.css" },
-];
+const RUNTIME_FILES = ["main.js", "manifest.json", "styles.css"];
 
-async function copyStaticFiles() {
+async function copyRuntimeFiles() {
 	const targets = [outDir, vaultPluginDir].filter(Boolean);
 	for (const target of targets) {
 		await mkdir(target, { recursive: true });
-		for (const file of STATIC_FILES) {
-			await copyFile(file.from, path.join(target, file.to));
-		}
-		if (target !== outDir) {
-			await copyFile(path.join(outDir, "main.js"), path.join(target, "main.js"));
+		for (const file of RUNTIME_FILES) {
+			await copyFile(file, path.join(target, file));
 		}
 	}
 }
 
-/** Copies manifest/styles (and mirrors to the vault) after every successful build. */
-const staticFilesPlugin = {
-	name: "formiqo-static-files",
+/** Copies the runtime files to dist/ (and the vault) after every successful build. */
+const runtimeFilesPlugin = {
+	name: "formiqo-runtime-files",
 	setup(build) {
 		build.onEnd(async (result) => {
 			if (result.errors.length > 0) return;
-			await copyStaticFiles();
-			console.log(`[formiqo] build complete -> ${[outDir, vaultPluginDir].filter(Boolean).join(", ")}`);
+			await copyRuntimeFiles();
+			console.log(`[formiqo] build complete -> ./main.js, ${[outDir, vaultPluginDir].filter(Boolean).join(", ")}`);
 		});
 	},
 };
@@ -69,8 +66,8 @@ const context = await esbuild.context({
 	treeShaking: true,
 	minify: production,
 	legalComments: "none",
-	outfile: path.join(outDir, "main.js"),
-	plugins: [staticFilesPlugin],
+	outfile: outFile,
+	plugins: [runtimeFilesPlugin],
 });
 
 if (production) {
