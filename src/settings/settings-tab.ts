@@ -95,9 +95,6 @@ const RESET = {
 	desc: "Restore every Formiqo setting to its default value.",
 } as const;
 
-/** First Obsidian version with the declarative settings API (getSettingDefinitions). */
-const DECLARATIVE_SETTINGS_VERSION = "1.13.0";
-
 function isSettingKey(key: string): key is SettingKey {
 	return SETTING_KEYS.has(key);
 }
@@ -204,10 +201,17 @@ export class FormiqoSettingTab extends PluginSettingTab {
 		}).open();
 	}
 
-	/** display() does not refresh declarative settings on 1.13+; update() does. */
+	/**
+	 * display() does not refresh declarative settings on 1.13+ (the first
+	 * version with getSettingDefinitions); update() does. The version must be a
+	 * string literal so Obsidian's API-compatibility lint recognises the guard.
+	 */
 	private refresh(): void {
-		if (requireApiVersion(DECLARATIVE_SETTINGS_VERSION)) this.update();
-		else this.render();
+		if (requireApiVersion("1.13.0")) {
+			this.update();
+		} else {
+			this.render();
+		}
 	}
 }
 
