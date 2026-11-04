@@ -2,10 +2,26 @@
   "name": "formiqo",
   "version": "1.0.0",
   "description": "Make Markdown beautiful. Intelligent Markdown formatting, paste correction, and Reading View enhancements for Obsidian.",
+  "author": "cachewraith",
+  "license": "MIT",
+  "homepage": "https://github.com/cachewraith/formiqo#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cachewraith/formiqo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cachewraith/formiqo/issues"
+  },
+  "keywords": [
+    "obsidian",
+    "obsidian-plugin",
+    "markdown",
+    "formatter",
+    "markdown-tables"
+  ],
   "main": "dist/main.js",
   "type": "module",
   "private": true,
-  "license": "MIT",
   "scripts": {
     "dev": "bun esbuild.config.mjs",
     "build": "bun esbuild.config.mjs production",

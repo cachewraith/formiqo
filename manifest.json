@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "minAppVersion": "1.1.0",
   "description": "Make Markdown beautiful. Repairs malformed Markdown on paste, normalizes documents, and refines the Reading View.",
-  "author": "Formiqo contributors",
-  "authorUrl": "",
+  "author": "cachewraith",
+  "authorUrl": "https://github.com/cachewraith",
   "isDesktopOnly": false
 }

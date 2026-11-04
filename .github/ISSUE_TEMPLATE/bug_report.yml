@@ -1,0 +1,55 @@
+name: Bug report
+description: Formiqo changed something it shouldn't have, or didn't fix something it should
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please remove anything private from the text you share.
+  - type: textarea
+    id: input
+    attributes:
+      label: Text you pasted or formatted
+      description: The exact Markdown, ideally copied from Source mode. It will be shown as code.
+      render: markdown
+    validations:
+      required: true
+  - type: dropdown
+    id: action
+    attributes:
+      label: What did you do?
+      options:
+        - Pasted text
+        - Format selected Markdown
+        - Format current document
+        - Fix Markdown tables
+        - Reading View looks wrong
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened
+      description: The resulting Markdown or a screenshot, plus any message Formiqo showed.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Obsidian version, Formiqo version, and desktop OS or mobile device
+      placeholder: Obsidian 1.15.0, Formiqo 1.0.0, Linux
+    validations:
+      required: true
+  - type: textarea
+    id: settings
+    attributes:
+      label: Changed settings or other plugins (optional)
+      description: Any Formiqo settings you turned off, and other plugins that handle pasting or formatting.

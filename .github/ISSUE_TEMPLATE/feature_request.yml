@@ -1,0 +1,21 @@
+name: Feature request
+description: Suggest a new repair, formatting rule or Reading View improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you running into?
+      description: For formatting ideas, include example Markdown before and after.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like Formiqo to do?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Anything else? (optional)
