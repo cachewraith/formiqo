@@ -132,3 +132,14 @@ Releases are built by GitHub Actions, never uploaded by hand. That way every rel
 
 5. `.github/workflows/release.yml` validates the plugin, builds it, attests `main.js` and `styles.css`, and creates a **draft** release with `main.js`, `manifest.json` and `styles.css`.
 6. Check the draft on the [Releases page](https://github.com/cachewraith/formiqo/releases), paste the changelog entry into it, and publish.
+
+**If the workflow's last step fails** with an HTTP 5xx error from GitHub ("Failed to create draft release"), the build and attestation have usually already succeeded. Re-run the job. If GitHub keeps failing, you can publish manually without losing provenance, because the build is reproducible:
+
+```bash
+git checkout <version> && bun install --frozen-lockfile && bun run build
+gh attestation verify main.js --repo cachewraith/formiqo      # must succeed
+gh attestation verify styles.css --repo cachewraith/formiqo   # must succeed
+gh release create <version> main.js manifest.json styles.css --verify-tag --latest --title "Formiqo <version>"
+```
+
+Only publish if both checks succeed: that proves your local files are byte-identical to the files CI built and attested.
