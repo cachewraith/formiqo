@@ -1,6 +1,6 @@
 # Settings
 
-Open **Settings → Formiqo** (under *Community plugins*). Changes take effect immediately. Every setting is **on** by default.
+Open **Settings → Formiqo** (under *Community plugins*). Changes take effect immediately. Every setting is **on** by default, except [Studio style](#studio-style).
 
 ## General
 
@@ -52,6 +52,15 @@ Turning one off lets the formatting rules work inside that content too. For exam
 | **Typography enhancements** | Headings, paragraph spacing, links, horizontal rules |
 | **List spacing** | Lists, nested lists, task checkboxes |
 | **Blockquote styling** | Quotes (callouts keep their native look) |
+
+## Studio style
+
+Both are **off** by default. See [Studio style](reading-view.md#studio-style).
+
+| Setting | What it does |
+|---|---|
+| **Studio style in Reading View** | An editor-like look for rendered notes: system fonts, crisp headings, blue links, framed code with syntax colours and striped tables. Replaces Formiqo's own Reading View look; *Responsive tables* and code labels still apply. Needs **Enhanced Reading View** to be on. |
+| **Studio style in the editor** | The matching look in Live Preview and Source mode: system and code fonts, coloured headings, links and list markers. |
 
 ## Reset
 

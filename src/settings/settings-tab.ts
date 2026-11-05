@@ -9,7 +9,7 @@ import {
 	type SettingDefinitionItem,
 } from "obsidian";
 import type { PreservationOptions } from "../types";
-import type { FormattingSettings, FormiqoSettings, ReadingSettings } from "./settings";
+import type { FormattingSettings, FormiqoSettings, StudioSettings, ReadingSettings } from "./settings";
 import type { FormiqoHost } from "./settings-host";
 
 /**
@@ -54,6 +54,11 @@ const READING_TOGGLES: readonly ToggleSpec<keyof ReadingSettings>[] = [
 	{ key: "blockquotes", name: "Blockquote styling", desc: "Accent border and subtle background for quotes. Callouts keep their native look." },
 ];
 
+const STUDIO_TOGGLES: readonly ToggleSpec<keyof StudioSettings>[] = [
+	{ key: "readingView", name: "Studio style in Reading View", desc: "A clean, editor-like look for rendered notes: system fonts, crisp headings, blue links, framed code with syntax colours, and striped tables. Replaces Formiqo's own Reading View look; responsive tables and code labels still apply." },
+	{ key: "editor", name: "Studio style in the editor", desc: "The matching look while writing, in Live Preview and Source mode: system and code fonts, coloured headings, links and list markers." },
+];
+
 /** Top-level settings keys, and `group.field` keys for the nested groups. */
 type SettingKey =
 	| "enabled"
@@ -61,7 +66,8 @@ type SettingKey =
 	| "readingView"
 	| `formatting.${keyof FormattingSettings}`
 	| `preservation.${keyof PreservationOptions}`
-	| `reading.${keyof ReadingSettings}`;
+	| `reading.${keyof ReadingSettings}`
+	| `studio.${keyof StudioSettings}`;
 
 interface Section {
 	/** Null for the first section, which (per Obsidian's guidelines) has no heading. */
@@ -85,6 +91,7 @@ const SECTIONS: readonly Section[] = [
 	{ heading: "Formatting", toggles: prefixed("formatting", FORMATTING_TOGGLES) },
 	{ heading: "Preservation", toggles: prefixed("preservation", PRESERVATION_TOGGLES) },
 	{ heading: "Reading View", toggles: prefixed("reading", READING_TOGGLES) },
+	{ heading: "Studio style", toggles: prefixed("studio", STUDIO_TOGGLES) },
 ];
 
 const SETTING_KEYS: ReadonlySet<string> = new Set(SECTIONS.flatMap((section) => section.toggles.map((toggle) => toggle.key)));

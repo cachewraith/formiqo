@@ -36,5 +36,10 @@ export function createDefaultSettings(): FormiqoSettings {
 			blockquotes: true,
 			responsiveTables: true,
 		},
+		// Opt-in: these change fonts and colours, which users may already control with a theme.
+		studio: {
+			readingView: false,
+			editor: false,
+		},
 	};
 }

@@ -50,6 +50,7 @@ Code examples, math and everything else that was already fine stay exactly as th
 ### 🎨 Reading View
 - Clean tables (wide ones scroll sideways), framed code blocks with language labels, refined inline code, clear heading hierarchy, even list spacing, styled blockquotes, and images scaled down to fit.
 - Uses your theme's colours and accent colour, in light and dark mode. Every visual setting can be changed with a CSS snippet.
+- **Optional Studio style:** an editor-like look with system fonts, crisp headings, coloured syntax and striped tables, for the Reading View and for writing in Live Preview and Source mode. Switch it with **Toggle Studio style**. [Details](docs/reading-view.md#studio-style)
 
 ### 🛡️ Safe by design
 - Never rewrites code, math, frontmatter, callout syntax, HTML, `%% comments %%` or `[[wikilinks]]`.
@@ -75,6 +76,7 @@ Full instructions: [Getting started](docs/getting-started.md). Requires Obsidian
 | Select text → **Formiqo: Format selected Markdown** | Tidies just that part |
 | <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>P</kbd> → **Formiqo: Fix Markdown tables** | Repairs broken tables only |
 | Switch to Reading View (<kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>E</kbd>) | Shows the enhanced styling |
+| <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>P</kbd> → **Formiqo: Toggle Studio style** | Switches to Studio style while reading and writing |
 
 Everything can be switched on or off in **Settings → Formiqo**.
 
@@ -84,7 +86,7 @@ Everything can be switched on or off in **Settings → Formiqo**.
 |---|---|
 | [Getting started](docs/getting-started.md) | Install and try it in two minutes |
 | [Paste formatting](docs/paste-formatting.md) | What happens when you paste, and when Formiqo doesn't step in |
-| [Commands](docs/commands.md) | The five commands in detail |
+| [Commands](docs/commands.md) | Every command in detail |
 | [Formatting rules](docs/formatting-rules.md) | Every rule, with before/after examples |
 | [Reading View](docs/reading-view.md) | What's styled and how to customize it |
 | [Settings](docs/settings.md) | Every setting explained |
@@ -107,3 +109,5 @@ Bug reports and ideas are welcome. Please use the [issue templates](https://gith
 ## License
 
 [MIT](LICENSE) © 2026 cachewraith
+
+Parts of the Studio style palette are adapted from MIT-licensed work; see [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

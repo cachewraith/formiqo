@@ -9,6 +9,7 @@ Open the command palette (<kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>P</kbd>) and type 
 | **Fix Markdown tables** | Repairs tables only |
 | **Toggle automatic paste formatting** | Turns paste repair on or off |
 | **Toggle enhanced Reading View** | Turns the Reading View styling on or off |
+| **Toggle Studio style** | Turns [Studio style](reading-view.md#studio-style) on or off for the Reading View and the editor together |
 
 ## Format selected Markdown
 
@@ -32,7 +33,11 @@ This is the command to use after pasting from somewhere Formiqo couldn't fix aut
 
 ## Toggles
 
-**Toggle automatic paste formatting** and **Toggle enhanced Reading View** flip the matching setting and confirm with a short message. Both stay available even when **Enable Formiqo** is off.
+**Toggle automatic paste formatting** and **Toggle enhanced Reading View** flip the matching setting and confirm with a short message.
+
+**Toggle Studio style** switches [Studio style](reading-view.md#studio-style) for both the Reading View and the editor. If either is on, both are turned off; otherwise both are turned on. Give it a hotkey to compare the two looks quickly.
+
+All three toggles stay available even when **Enable Formiqo** is off.
 
 ## Messages and undo
 

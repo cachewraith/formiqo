@@ -49,6 +49,7 @@ describe("FormiqoSettingTab – declarative (Obsidian 1.13+)", () => {
 			["Formatting", 8],
 			["Preservation", 6],
 			["Reading View", 6],
+			["Studio style", 2],
 			["Reset", 1],
 		]);
 	});
@@ -57,7 +58,8 @@ describe("FormiqoSettingTab – declarative (Obsidian 1.13+)", () => {
 		const { tab, host } = setup();
 		host.settings.formatting.links = false;
 		const keys = definitionsOf(tab.getSettingDefinitions()).map(controlKey).filter((key): key is string => key !== undefined);
-		expect(new Set(keys).size).toBe(23);
+		expect(new Set(keys).size).toBe(25);
+		expect(tab.getControlValue("studio.readingView")).toBe(false);
 		expect(tab.getControlValue("formatting.links")).toBe(false);
 		expect(tab.getControlValue("reading.tables")).toBe(true);
 		expect(tab.getControlValue("enabled")).toBe(true);
@@ -107,7 +109,7 @@ describe("FormiqoSettingTab – imperative (Obsidian < 1.13)", () => {
 		const imperative = created().filter((setting) => setting.toggleChange !== null).map((setting) => setting.name);
 		const declarative = definitionsOf(tab.getSettingDefinitions()).filter((definition) => controlKey(definition) !== undefined).map((definition) => definition.name);
 		expect(imperative).toEqual(declarative);
-		expect(created().filter((setting) => setting.isHeading).map((setting) => setting.name)).toEqual(["Formatting", "Preservation", "Reading View", "Reset"]);
+		expect(created().filter((setting) => setting.isHeading).map((setting) => setting.name)).toEqual(["Formatting", "Preservation", "Reading View", "Studio style", "Reset"]);
 	});
 
 	it("shows current values and writes changes through the host", async () => {

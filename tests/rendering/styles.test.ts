@@ -47,16 +47,21 @@ describe("styles.css", () => {
 		expect(all.length).toBeGreaterThan(20);
 	});
 
-	it("gates every rule behind the formiqo-reading body class", () => {
+	/** The first compound selector, i.e. the body-level classes the rule depends on. */
+	const gate = (selector: string): string => selector.split(/\s+/)[0] ?? "";
+
+	it("gates every rule behind a Formiqo body class", () => {
 		for (const selector of all) {
-			expect(selector, selector).toMatch(/^(?:body)?(?:\.is-mobile)?\.formiqo-reading\b/);
+			expect(gate(selector), selector).toMatch(/\.formiqo-(?:reading|studio-editor)\b/);
 		}
 	});
 
-	it("scopes every element rule to rendered Markdown", () => {
+	it("scopes Reading View rules to rendered notes and editor rules to the editor", () => {
 		const variableBlocks = new Set(["body.formiqo-reading", ".is-mobile.formiqo-reading"]);
 		for (const selector of all.filter((s) => !variableBlocks.has(s))) {
-			expect(selector, selector).toContain(".markdown-preview-view");
+			const isEditorRule = gate(selector).includes(".formiqo-studio-editor");
+			expect(selector, selector).toContain(isEditorRule ? ".markdown-source-view" : ".markdown-preview-view");
+			expect(selector, selector).not.toContain(isEditorRule ? ".markdown-preview-view" : ".markdown-source-view");
 		}
 	});
 

@@ -1,5 +1,6 @@
 /**
- * Enhanced Reading View: feature classes on <body> that scope the stylesheet.
+ * Body classes that scope the stylesheet: the enhanced Reading View and its
+ * features, and the optional Studio look for the Reading View and editor.
  *
  * All styles in styles.css are gated behind these classes, so turning a
  * feature (or the whole plugin) off restores Obsidian's native look
@@ -10,6 +11,10 @@ import { MarkdownView, type Workspace } from "obsidian";
 import type { FormiqoSettings, ReadingSettings } from "../settings/settings";
 
 export const ROOT_CLASS = "formiqo-reading";
+/** Studio look for rendered notes; replaces Formiqo's own feature styling. */
+export const STUDIO_READING_CLASS = "formiqo-studio";
+/** Studio look for Live Preview and Source mode; independent of the Reading View. */
+export const STUDIO_EDITOR_CLASS = "formiqo-studio-editor";
 
 const FEATURE_CLASSES: Readonly<Record<keyof ReadingSettings, string>> = {
 	tables: "formiqo-tables",
@@ -20,19 +25,27 @@ const FEATURE_CLASSES: Readonly<Record<keyof ReadingSettings, string>> = {
 	responsiveTables: "formiqo-responsive-tables",
 };
 
-const ALL_CLASSES = [ROOT_CLASS, ...Object.values(FEATURE_CLASSES)];
+/** Features that keep working under the Studio look, which replaces the rest. */
+const FEATURES_KEPT_WITH_STUDIO: readonly (keyof ReadingSettings)[] = ["responsiveTables"];
+
+const ALL_CLASSES = [ROOT_CLASS, STUDIO_READING_CLASS, STUDIO_EDITOR_CLASS, ...Object.values(FEATURE_CLASSES)];
 
 export function isReadingViewActive(settings: FormiqoSettings): boolean {
 	return settings.enabled && settings.readingView;
 }
 
 /** The body classes that should be present for the given settings. */
-export function readingViewClasses(settings: FormiqoSettings): string[] {
-	if (!isReadingViewActive(settings)) return [];
-	const features = (Object.keys(FEATURE_CLASSES) as (keyof ReadingSettings)[])
-		.filter((key) => settings.reading[key])
-		.map((key) => FEATURE_CLASSES[key]);
-	return [ROOT_CLASS, ...features];
+export function bodyClasses(settings: FormiqoSettings): string[] {
+	const classes: string[] = [];
+	if (isReadingViewActive(settings)) {
+		const studio = settings.studio.readingView;
+		const features = (Object.keys(FEATURE_CLASSES) as (keyof ReadingSettings)[])
+			.filter((key) => settings.reading[key] && (!studio || FEATURES_KEPT_WITH_STUDIO.includes(key)))
+			.map((key) => FEATURE_CLASSES[key]);
+		classes.push(ROOT_CLASS, ...(studio ? [STUDIO_READING_CLASS] : []), ...features);
+	}
+	if (settings.enabled && settings.studio.editor) classes.push(STUDIO_EDITOR_CLASS);
+	return classes;
 }
 
 /**
@@ -64,7 +77,7 @@ export class ReadingViewStyler {
 
 	private apply(doc: Document): void {
 		doc.body.classList.remove(...ALL_CLASSES);
-		doc.body.classList.add(...readingViewClasses(this.getSettings()));
+		doc.body.classList.add(...bodyClasses(this.getSettings()));
 	}
 }
 

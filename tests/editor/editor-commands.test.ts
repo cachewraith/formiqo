@@ -37,7 +37,7 @@ function setup() {
 }
 
 describe("commands", () => {
-	it("registers the five Formiqo commands without default hotkeys", () => {
+	it("registers the Formiqo commands without default hotkeys", () => {
 		const { commands } = setup();
 		expect(commands.map((command) => [command.id, command.name])).toEqual([
 			["format-selection", "Format selected Markdown"],
@@ -45,6 +45,7 @@ describe("commands", () => {
 			["fix-tables", "Fix Markdown tables"],
 			["toggle-paste-formatting", "Toggle automatic paste formatting"],
 			["toggle-reading-view", "Toggle enhanced Reading View"],
+			["toggle-studio-style", "Toggle Studio style"],
 		]);
 		expect(commands.every((command) => command.hotkeys === undefined)).toBe(true);
 	});
@@ -100,6 +101,16 @@ describe("commands", () => {
 			"Formiqo: enhanced Reading View disabled.",
 			"Formiqo: automatic paste formatting enabled.",
 		]);
+	});
+
+	it("toggles the Studio style for the Reading View and editor together", async () => {
+		const { host, byId, messages } = setup();
+		await byId("toggle-studio-style").callback?.();
+		expect(host.settings.studio).toEqual({ readingView: true, editor: true });
+		host.settings.studio.editor = false;
+		await byId("toggle-studio-style").callback?.();
+		expect(host.settings.studio).toEqual({ readingView: false, editor: false });
+		expect(messages).toEqual(["Formiqo: Studio style enabled in the Reading View and editor.", "Formiqo: Studio style disabled."]);
 	});
 
 	it("describes every outcome", () => {

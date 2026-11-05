@@ -26,6 +26,14 @@ export interface ReadingSettings {
 	responsiveTables: boolean;
 }
 
+/** Optional "Studio" look: its own fonts, colours and text styles. */
+export interface StudioSettings {
+	/** Studio fonts, colours and text styles in the Reading View (replaces Formiqo's own look). */
+	readingView: boolean;
+	/** Studio fonts and Markdown colours in Live Preview and Source mode. */
+	editor: boolean;
+}
+
 export interface FormiqoSettings {
 	version: number;
 	enabled: boolean;
@@ -34,6 +42,7 @@ export interface FormiqoSettings {
 	formatting: FormattingSettings;
 	preservation: PreservationOptions;
 	reading: ReadingSettings;
+	studio: StudioSettings;
 }
 
 /** Which formatter each formatting toggle controls. */
@@ -79,6 +88,7 @@ export function loadSettingsData(raw: unknown): LoadedSettings {
 		formatting: readBooleanGroup(migrated.formatting, defaults.formatting),
 		preservation: readBooleanGroup(migrated.preservation, defaults.preservation),
 		reading: readBooleanGroup(migrated.reading, defaults.reading),
+		studio: readBooleanGroup(migrated.studio, defaults.studio),
 	};
 	return { settings, needsSave: JSON.stringify(settings) !== JSON.stringify(raw) };
 }

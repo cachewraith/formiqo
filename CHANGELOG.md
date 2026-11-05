@@ -2,6 +2,14 @@
 
 All notable changes to Formiqo are listed here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] – 2026-11-05
+
+### Added
+- **Studio style** (off by default): an alternative, editor-like look.
+  - *Studio style in Reading View* replaces Formiqo's own Reading View look: system and code fonts, crisp headings, blue links, framed code blocks with syntax colours, striped tables, quotes, rules and highlights.
+  - *Studio style in the editor* applies to Live Preview and Source mode: coloured headings, links and list markers, a violet cursor and selection, and code fonts.
+  - New command **Toggle Studio style** switches both.
+
 ## [1.0.1] – 2026-11-04
 
 Addresses the community directory's review of 1.0.0.

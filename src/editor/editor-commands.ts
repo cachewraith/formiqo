@@ -86,6 +86,19 @@ export function createCommands(host: FormiqoHost, notify: Notify = showNotice): 
 				notify(`Formiqo: enhanced Reading View ${host.settings.readingView ? "enabled" : "disabled"}.`);
 			},
 		},
+		{
+			id: "toggle-studio-style",
+			name: "Toggle Studio style",
+			callback: async () => {
+				// One switch for both views: turn everything off if any part is on, otherwise turn both on.
+				const enable = !host.settings.studio.readingView && !host.settings.studio.editor;
+				await host.updateSettings((settings) => {
+					settings.studio.readingView = enable;
+					settings.studio.editor = enable;
+				});
+				notify(`Formiqo: Studio style ${enable ? "enabled in the Reading View and editor" : "disabled"}.`);
+			},
+		},
 	];
 }
 

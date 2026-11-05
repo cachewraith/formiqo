@@ -39,6 +39,7 @@ describe("FormiqoPlugin lifecycle", () => {
 			"fix-tables",
 			"toggle-paste-formatting",
 			"toggle-reading-view",
+			"toggle-studio-style",
 		]);
 		expect(plugin.app.workspace.handlers.get("editor-paste")).toHaveLength(1);
 		expect(plugin.app.workspace.handlers.get("window-open")).toHaveLength(1);

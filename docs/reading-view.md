@@ -25,7 +25,35 @@ All of this switches off at once with **Enhanced Reading View** in settings, or 
 
 Formiqo has no colours of its own. It uses your theme's colours and your **accent colour**, so it works in light mode, dark mode and with community themes. If a theme already styles tables or code heavily, you can turn off the matching Formiqo setting.
 
-Styling applies to rendered notes: Reading View, embedded notes and hover previews. The editor (Live Preview and Source mode) is not restyled, and neither is the rest of Obsidian's interface.
+Styling applies to rendered notes: Reading View, embedded notes and hover previews. The editor (Live Preview and Source mode) is only restyled if you turn on [Studio style](#studio-style) for the editor. The rest of Obsidian's interface is never restyled.
+
+## Studio style
+
+Studio style is an alternative, editor-like look for reading and writing. It is **off by default**. Turn it on in **Settings → Formiqo → Studio style**, or run **Toggle Studio style** to switch the Reading View and editor together.
+
+**Studio style in Reading View** gives rendered notes:
+
+- your system's interface font (San Francisco on macOS, Segoe UI on Windows, Lato or your system sans-serif on Linux) and a clean code font (SF Mono, Menlo, Consolas or similar), at a 1.5 line height
+- crisp, compact headings, with a line under level 1 and 2 headings
+- blue links without an underline until you hover
+- framed code blocks with syntax colours and a language label, and inline code on a soft grey background
+- bordered, striped tables; muted quotes with a thick grey bar; a solid grey horizontal rule; yellow highlights
+
+It replaces Formiqo's own Reading View look. *Responsive tables* and code language labels still apply.
+
+**Studio style in the editor** applies to Live Preview and Source mode:
+
+- the same text and code fonts
+- **pink, bold headings**, teal links, and italic quotes
+- list markers coloured by level (indigo, orange, green)
+- a violet cursor and selection colour
+- inline code and code blocks in the code font, with syntax colours
+
+Both work in light and dark mode. Your **font size** and your theme's **background** are kept. Only the note area is restyled; the sidebars and the rest of the interface are not.
+
+> **Linux tip:** for the intended look, install the Lato font (on Arch: `sudo pacman -S ttf-lato`; on Debian/Ubuntu: `sudo apt install fonts-lato`), then restart Obsidian.
+
+To fine-tune Studio style, override any `--formiqo-studio-*` variable in a CSS snippet, for example `--formiqo-studio-font`, `--formiqo-studio-mono`, `--formiqo-studio-heading` or `--formiqo-studio-link`. The full list is in the "Studio style" section of `styles.css`.
 
 ## Customizing with a CSS snippet
 

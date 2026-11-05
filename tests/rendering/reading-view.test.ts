@@ -2,7 +2,7 @@
 import type { MarkdownPostProcessorContext } from "obsidian";
 import { describe, expect, it } from "vitest";
 import { createReadingViewPostProcessor, LANGUAGE_ATTRIBUTE, TABLE_WRAPPER_CLASS } from "../../src/rendering/markdown-postprocessor";
-import { readingViewClasses, ReadingViewStyler } from "../../src/rendering/reading-view";
+import { bodyClasses, ReadingViewStyler } from "../../src/rendering/reading-view";
 import type { FormiqoSettings } from "../../src/settings/settings";
 import { createDefaultSettings } from "../../src/settings/settings-defaults";
 import { installObsidianDomHelpers } from "../mocks/obsidian-dom";
@@ -70,7 +70,7 @@ describe("Reading View post-processor", () => {
 describe("Reading View body classes", () => {
 	it("maps settings to classes", () => {
 		const settings = createDefaultSettings();
-		expect(readingViewClasses(settings)).toEqual([
+		expect(bodyClasses(settings)).toEqual([
 			"formiqo-reading",
 			"formiqo-tables",
 			"formiqo-code",
@@ -80,9 +80,26 @@ describe("Reading View body classes", () => {
 			"formiqo-responsive-tables",
 		]);
 		settings.reading.lists = false;
-		expect(readingViewClasses(settings)).not.toContain("formiqo-lists");
+		expect(bodyClasses(settings)).not.toContain("formiqo-lists");
 		settings.enabled = false;
-		expect(readingViewClasses(settings)).toEqual([]);
+		expect(bodyClasses(settings)).toEqual([]);
+	});
+
+	it("replaces Formiqo's own Reading View look with the Studio style, keeping responsive tables", () => {
+		const settings = createDefaultSettings();
+		settings.studio.readingView = true;
+		expect(bodyClasses(settings)).toEqual(["formiqo-reading", "formiqo-studio", "formiqo-responsive-tables"]);
+		settings.reading.responsiveTables = false;
+		expect(bodyClasses(settings)).toEqual(["formiqo-reading", "formiqo-studio"]);
+	});
+
+	it("applies the Studio editor style independently of the Reading View", () => {
+		const settings = createDefaultSettings();
+		settings.studio.editor = true;
+		settings.readingView = false;
+		expect(bodyClasses(settings)).toEqual(["formiqo-studio-editor"]);
+		settings.enabled = false;
+		expect(bodyClasses(settings)).toEqual([]);
 	});
 
 	it("keeps unrelated body classes intact", () => {
